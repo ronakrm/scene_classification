@@ -9,7 +9,28 @@ Note: Initial generation of spatial pyramid features takes quite a long time. Su
 
 ## Parameter Setup
 
-Parameters for grid search and model generation are set in the "Parameter Setup" section in SP/main.m.
+Parameters for grid search and model generation are set in the "Parameter Setup" section in SP/main.m
 
+*param1:deatils
+*param2:details
 
-## Linear kernel vs Histogram-Intersection Kernel
+## Results
+### Linear kernel vs Histogram-Intersection Kernel
+Here is why why one would wish to use the hist kern....
+
+We fixed the parameters to TODO and ran the classification training and testing both with and without using the Histogram Intersection Kernel. In general, the use of the kernel provides a significant accuracy boost. Below we report the accuracies and confusion matricies for both methods, averaged over 5 random reselections of training sets:
+  TODO confusionHIST
+  TODO confusionNONHIST
+
+### Kernel Methods
+
+confusion matrix/accuracy of various kernel methods (linear, quadratic, rbf, isect-hist)
+  
+### Training Set Size
+  We fixed the parameters to TODO and varied the training set size from the set [asdf asdf asdfas].
+  
+  TODO plot of accuracy vs training set size
+  
+  comments on overfitting here
+  
+### Grid Search
