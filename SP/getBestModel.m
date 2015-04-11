@@ -1,4 +1,4 @@
-function [ accuracy, best_num_train, best_solver_type ] = getBestModel( pyramids, num_runs, num_train, solver_type )
+function [ predicted_labels, actual_labels, accuracy, best_num_train, best_solver_type ] = getBestModel( pyramids, total_images, num_runs, num_train, solver_type, k)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -10,10 +10,10 @@ for a=1:size(num_train)
         mean_accuracy = 0;
         
         for run=1:num_runs
-             [train_pyramids, train_labels, test_pyramids, test_labels] = createDataSplit(pyramids, num_train);
+             [train_pyramids, train_labels, test_pyramids, test_labels] = createDataSplit(pyramids, total_images, num_train);
              options = sprintf('-s %d',solver_type(b));
              this_model = train(train_labels, sparse(train_pyramids), options);
-            [this_predict_label, this_accuracy, this_prob_estimates] = predict(test_labels, test_pyramids, this_model);
+            [this_predict_label, this_accuracy, this_prob_estimates] = predict(test_labels, sparse(test_pyramids), this_model);
             
             label_diffs = this_predict_label - test_labels;
                         
@@ -35,12 +35,14 @@ for a=1:size(num_train)
             mean_accuracy = mean_accuracy + run_accuracy;
         end
         
-        mean_accuracy = mean_accuracy/size(num_runs);
+        mean_accuracy = mean_accuracy/size(num_runs,1);
         
         if (mean_accuracy > accuracy)
             best_num_train = a;
             best_solver_type = b;
             accuracy = mean_accuracy;
+            predicted_labels = this_predict_label;
+            actual_labels = test_labels;
         end
         
     end

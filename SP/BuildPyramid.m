@@ -41,43 +41,43 @@ function [ pyramid_all ] = BuildPyramid( imageFileList, imageBaseDir, dataBaseDi
 %% parameters for feature extraction (see GenerateSiftDescriptors)
 
 if(~exist('params','var'))
-    params.maxImageSize = 1000
-    params.gridSpacing = 8
-    params.patchSize = 16
-    params.dictionarySize = 200
-    params.numTextonImages = 50
-    params.pyramidLevels = 3
+    params.maxImageSize = 1000;
+    params.gridSpacing = 8;
+    params.patchSize = 16;
+    params.dictionarySize = 200;
+    params.numTextonImages = 50;
+    params.pyramidLevels = 3;
     params.oldSift = false;
 end
 
 
 if(~isfield(params,'maxImageSize'))
-    params.maxImageSize = 1000
+    params.maxImageSize = 1000;
 end
 if(~isfield(params,'gridSpacing'))
-    params.gridSpacing = 8
+    params.gridSpacing = 8;
 end
 if(~isfield(params,'patchSize'))
-    params.patchSize = 16
+    params.patchSize = 16;
 end
 if(~isfield(params,'dictionarySize'))
-    params.dictionarySize = 200
+    params.dictionarySize = 200;
 end
 if(~isfield(params,'numTextonImages'))
-    params.numTextonImages = 50
+    params.numTextonImages = 50;
 end
 if(~isfield(params,'pyramidLevels'))
-    params.pyramidLevels = 3
+    params.pyramidLevels = 3;
 end
 if(~isfield(params,'oldSift'))
-    params.oldSift = false
+    params.oldSift = false;
 end
 
 if(~exist('canSkip','var'))
-    canSkip = 1
+    canSkip = 1;
 end
 if(~exist('saveSift','var'))
-    saveSift = 1
+    saveSift = 1;
 end
 
 pfig = sp_progress_bar('Building Spatial Pyramid');
