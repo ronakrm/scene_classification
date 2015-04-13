@@ -31,7 +31,7 @@ for k=1:size(kernel_type)
         end
         
         this_model = svmtrain(train_labels, sparse(train_pyramids), options);
-        [this_predicted_label, this_accuracy, this_prob_estimates] = svmpredict(test_labels, sparse(test_pyramids), this_model);
+        [this_predicted_label, ~, ~] = svmpredict(test_labels, sparse(test_pyramids), this_model);
         
         label_diffs = this_predicted_label - test_labels;
         

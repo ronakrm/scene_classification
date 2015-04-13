@@ -95,7 +95,9 @@ for f = 1:length(imageFileList)
         features = sp_gen_sift(fullfile(imageBaseDir, imageFName),params);
     end
     ndata = size(features.data,1);
-    sp_progress_bar(pfig,3,4,f,length(imageFileList),'Building Histograms:');
+    if(exist('pfig','var'))
+        sp_progress_bar(pfig,3,4,f,length(imageFileList),'Building Histograms:');
+    end
     %fprintf('Loaded %s, %d descriptors\n', inFName, ndata);
 
     %% find texton indices and compute histogram 

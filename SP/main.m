@@ -4,15 +4,21 @@
 
 load_pyramids = false;
 
-%number of runs for paramset
-num_runs = 2;
-
 %number of training instances
 %num_train = [25, 50, 100];
-num_train = [100];
+num_train = 100;
 
 %libsvm kernel type; 4 is custom precompute, here hist_isect
-kernel_type = [0;4]; %0 to 4
+kernel_type = [0,4]; %0 to 4
+
+params.maxImageSize = 1000;
+params.gridSpacing = 8;
+params.patchSize = 16;
+params.dictionarySize = 200;
+params.numTextonImages = 50;
+params.pyramidLevels = 3;
+params.oldSift = false;
+
 
 %%
 
@@ -97,9 +103,11 @@ else
         train_filenames = filenames{d}(list(1:num_train));
         test_filenames = filenames{d}(list(num_train+1:num_files));
         
-        train_pyramidsC{d} = BuildPyramid(train_filenames{d}, fullfile(image_dir,dirname), fullfile(data_dir, dirname));
-        test_pyramidsC{d} = BuildPyramid(test_filenames{d}, fullfile(image_dir,dirname), fullfile(data_dir, dirname));
+        train_pyramidsC{d} = BuildPyramid(train_filenames, fullfile(image_dir,dirname), fullfile(data_dir, dirname),params,1,1);
         
+        pfig = sp_progress_bar('Building Histograms and Spatial Pyramids for Test');
+        BuildHistograms(test_filenames, fullfile(image_dir,dirname), fullfile(data_dir, dirname),'_sift.mat',params,0,pfig);
+        test_pyramidsC{d} = CompilePyramid(test_filenames, fullfile(data_dir, dirname), sprintf('_texton_ind_%d.mat',params.dictionarySize),params,0,pfig);
         
         displayyy = sprintf('Completed building pyramids for dir %d',d);
         disp(displayyy);
@@ -110,12 +118,12 @@ else
    [train_pyramids, train_labels, test_pyramids, test_labels] = createDataSplit(train_pyramidsC, test_pyramidsC);
     
     % save out train and test pyramids mat files
-    save(trainmatfile, train_pyramids);
-    save(testmatfile, test_pyramids);
+    save(trainmatfile, 'train_pyramids');
+    save(testmatfile, 'test_pyramids');
     
     % save out train and test labels mat files
-    save(trainlabelfile, train_labels);
-    save(testlabelfile, test_labels);    
+    save(trainlabelfile, 'train_labels');
+    save(testlabelfile, 'test_labels');    
 
     % make set
     train_pyramids_set{1} = train_pyramids;
@@ -126,20 +134,20 @@ else
 end
 
 %% get best model
-[ predicted_labels, actual_labels, accuracy, best_kernel_type] = getBestModel( ...
-                    train_pyramids_set, ...
-                    test_pyramids_set, ...
-                    train_labels_set, ...
-                    test_labels_set, ...
-                    kernel_type ...
-                );
-
-% make confusion matrix
-c = confusionmat(actual_labels,predicted_labels);
-
-cc = c;
-for i=1:num_dirs
-    cc(i,:) = c(i,:)/sum(c(i,:));
-end
-
-imshow(cc, 'InitialMagnification', 1000);
+% [ predicted_labels, actual_labels, accuracy, best_kernel_type] = getBestModel( ...
+%                     train_pyramids_set, ...
+%                     test_pyramids_set, ...
+%                     train_labels_set, ...
+%                     test_labels_set, ...
+%                     kernel_type ...
+%                 );
+% 
+% % make confusion matrix
+% c = confusionmat(actual_labels,predicted_labels);
+% 
+% cc = c;
+% for i=1:num_dirs
+%     cc(i,:) = c(i,:)/sum(c(i,:));
+% end
+% 
+% imshow(cc, 'InitialMagnification', 1000);
