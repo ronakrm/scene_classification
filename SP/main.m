@@ -56,81 +56,85 @@ else
     image_dir = '../inputs';
     data_dir = 'data';
     
-    seed = 1;
-    trainmatfile = sprintf('train_pyramids_%d.mat',seed);
-    testmatfile = sprintf('test_pyramids_%d.mat',seed);
+    seedsize = 5;
     
-    trainlabelfile = sprintf('train_labels_%d.mat',seed);
-    testlabelfile = sprintf('test_labels_%d.mat',seed);
-    
-    num_runs = 1;
-    total_images = 0;
-    
-    % for other parameters, see BuildPyramid
-    dirs = dir(fullfile(image_dir, '/'));
-    dirs(1)=[];dirs(1)=[];
-    num_dirs = size(dirs,1);
-    
-    filenames = cell(cell(1));
-    
-    train_pyramids_set = cell(num_runs,1);
-    test_pyramids_set = cell(num_runs,1);
-    
-    train_labels_set = cell(num_runs,1);
-    test_labels_set = cell(num_runs,1);
-    
-    train_pyramidsC = cell(1);
-    test_pyramidsC = cell(1);
-    
-    %suppress warning about erasemode within SP buildpyramid code
-    warning('off','MATLAB:hg:EraseModeIgnored');
-    for d = 1:num_dirs
+    for seed=1:seedsize
         
-        dirname = dirs(d).name;
+        trainmatfile = sprintf('train_pyramids_%d.mat',seed);
+        testmatfile = sprintf('test_pyramids_%d.mat',seed);
         
-        fnames = dir(fullfile(image_dir, dirname, '*.jpg'));
-        num_files = size(fnames,1);
+        trainlabelfile = sprintf('train_labels_%d.mat',seed);
+        testlabelfile = sprintf('test_labels_%d.mat',seed);
         
-        filenames{d} = cell(num_files,1);
+        num_runs = 1;
+        total_images = 0;
         
-        for i=1:num_files
-            filenames{d}{i} = fnames(i).name;
+        % for other parameters, see BuildPyramid
+        dirs = dir(fullfile(image_dir, '/'));
+        dirs(1)=[];dirs(1)=[];
+        num_dirs = size(dirs,1);
+        
+        filenames = cell(cell(1));
+        
+        train_pyramids_set = cell(num_runs,1);
+        test_pyramids_set = cell(num_runs,1);
+        
+        train_labels_set = cell(num_runs,1);
+        test_labels_set = cell(num_runs,1);
+        
+        train_pyramidsC = cell(1);
+        test_pyramidsC = cell(1);
+        
+        %suppress warning about erasemode within SP buildpyramid code
+        warning('off','MATLAB:hg:EraseModeIgnored');
+        for d = 1:num_dirs
+            
+            dirname = dirs(d).name;
+            
+            fnames = dir(fullfile(image_dir, dirname, '*.jpg'));
+            num_files = size(fnames,1);
+            
+            filenames{d} = cell(num_files,1);
+            
+            for i=1:num_files
+                filenames{d}{i} = fnames(i).name;
+            end
+            
+            rng(seed);
+            list = randperm(num_files);
+            
+            train_filenames = filenames{d}(list(1:num_train));
+            test_filenames = filenames{d}(list(num_train+1:num_files));
+            
+            train_pyramidsC{d} = BuildPyramid(train_filenames, fullfile(image_dir,dirname), fullfile(data_dir, dirname),params,0,0);
+            
+            pfig = sp_progress_bar('Building Histograms and Spatial Pyramids for Test');
+            BuildHistograms(test_filenames, fullfile(image_dir,dirname), fullfile(data_dir, dirname),'_sift.mat',params,0,pfig);
+            test_pyramidsC{d} = CompilePyramid(test_filenames, fullfile(data_dir, dirname), sprintf('_texton_ind_%d.mat',params.dictionarySize),params,0,pfig);
+            
+            displayyy = sprintf('Completed building pyramids for dir %d',d);
+            disp(displayyy);
         end
         
-        rng(seed);
-        list = randperm(num_files);
+        warning('on','MATLAB:hg:EraseModeIgnored');
         
-        train_filenames = filenames{d}(list(1:num_train));
-        test_filenames = filenames{d}(list(num_train+1:num_files));
+        [train_pyramids, train_labels, test_pyramids, test_labels] = createDataSplit(train_pyramidsC, test_pyramidsC);
         
-        train_pyramidsC{d} = BuildPyramid(train_filenames, fullfile(image_dir,dirname), fullfile(data_dir, dirname),params,1,1);
+        % save out train and test pyramids mat files
+        save(trainmatfile, 'train_pyramids');
+        save(testmatfile, 'test_pyramids');
         
-        pfig = sp_progress_bar('Building Histograms and Spatial Pyramids for Test');
-        BuildHistograms(test_filenames, fullfile(image_dir,dirname), fullfile(data_dir, dirname),'_sift.mat',params,0,pfig);
-        test_pyramidsC{d} = CompilePyramid(test_filenames, fullfile(data_dir, dirname), sprintf('_texton_ind_%d.mat',params.dictionarySize),params,0,pfig);
+        % save out train and test labels mat files
+        save(trainlabelfile, 'train_labels');
+        save(testlabelfile, 'test_labels');
         
-        displayyy = sprintf('Completed building pyramids for dir %d',d);
-        disp(displayyy);
+        % make set
+        train_pyramids_set{1} = train_pyramids;
+        test_pyramids_set{1} = test_pyramids;
+        
+        train_labels_set{1} = train_labels;
+        test_labels_set{1} = test_labels;
     end
-    
-    warning('on','MATLAB:hg:EraseModeIgnored');
-    
-   [train_pyramids, train_labels, test_pyramids, test_labels] = createDataSplit(train_pyramidsC, test_pyramidsC);
-    
-    % save out train and test pyramids mat files
-    save(trainmatfile, 'train_pyramids');
-    save(testmatfile, 'test_pyramids');
-    
-    % save out train and test labels mat files
-    save(trainlabelfile, 'train_labels');
-    save(testlabelfile, 'test_labels');    
-
-    % make set
-    train_pyramids_set{1} = train_pyramids;
-    test_pyramids_set{1} = test_pyramids;
-    
-    train_labels_set{1} = train_labels;
-    test_labels_set{1} = test_labels;
 end
 
 %% get best model
@@ -141,13 +145,13 @@ end
 %                     test_labels_set, ...
 %                     kernel_type ...
 %                 );
-% 
+%
 % % make confusion matrix
 % c = confusionmat(actual_labels,predicted_labels);
-% 
+%
 % cc = c;
 % for i=1:num_dirs
 %     cc(i,:) = c(i,:)/sum(c(i,:));
 % end
-% 
+%
 % imshow(cc, 'InitialMagnification', 1000);
