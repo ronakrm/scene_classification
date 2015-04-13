@@ -5,7 +5,9 @@ function [ train_pyramids, train_labels, test_pyramids, test_labels ] = createDa
 classes = size(train_pyramidsC,1);
 
 num_train = size(train_pyramidsC{1},1);
-total_num_test = sum(size(test_pyramidsC{:},1));
+
+[class_test_sizes, ~] = cellfun(@size,test_pyramidsC, 'uni',false);
+total_num_test = sum(cell2mat(class_test_sizes));
 
 % here is where we split train/test
 train_pyramids = zeros(classes*num_train,4200);
@@ -19,7 +21,7 @@ for c=1:classes
     train_pyramids((c-1)*num_train+1:c*num_train,:) = train_pyramidsC{c};
     train_labels((c-1)*num_train+1:c*num_train) = c;
     
-    test_size = size(test_pyramidsC{c},1);
+    test_size = class_test_sizes{c};
     
     test_pyramids(test_counter:test_counter+test_size-1,:) = test_pyramidsC{c};
     test_labels(test_counter:test_counter+test_size-1,:) = c;

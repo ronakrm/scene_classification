@@ -111,6 +111,7 @@ else
             pfig = sp_progress_bar('Building Histograms and Spatial Pyramids for Test');
             BuildHistograms(test_filenames, fullfile(image_dir,dirname), fullfile(data_dir, dirname),'_sift.mat',params,0,pfig);
             test_pyramidsC{d} = CompilePyramid(test_filenames, fullfile(data_dir, dirname), sprintf('_texton_ind_%d.mat',params.dictionarySize),params,0,pfig);
+            close(pfig);
             
             displayyy = sprintf('Completed building pyramids for dir %d',d);
             disp(displayyy);
