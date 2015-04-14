@@ -7,12 +7,12 @@ function [ predicted_labels, actual_labels, accuracy, best_kernel_type ] = getBe
 %   Detailed explanation goes here
 
 accuracy = 0;
-
-num_classes = size(train_pyramids_set{1},1);
+num_runs = size(train_pyramids_set,1);
+num_classes = size(unique(train_labels_set{1}),1);
 
 for k=1:size(kernel_type)
     mean_accuracy = 0;
-    for run=1:size(train_pyramids_set,1);
+    for run=1:num_runs
         
         train_pyramids = train_pyramids_set{run};
         test_pyramids = test_pyramids_set{run};
@@ -20,7 +20,7 @@ for k=1:size(kernel_type)
         train_labels = train_labels_set{run};
         test_labels = test_labels_set{run};
         
-        fprintf('Starting run %d with kernel %d',run,kernel_type(k));
+        fprintf('Starting run %d with kernel %d\n',run,kernel_type(k));
         
         options = sprintf('-q -s 1 -t %d', kernel_type(k));
         
@@ -40,7 +40,7 @@ for k=1:size(kernel_type)
         class_start = 1;
         % calculate mean accuracy over classes
         for class=1:num_classes
-            class_test_size = size(test_pyramids{class},1);
+            class_test_size = sum(test_labels==class);
             num_correct = sum(label_diffs(class_start:class_start+class_test_size-1)==0);
             
             run_accuracy = run_accuracy + double(num_correct)/double(class_test_size);

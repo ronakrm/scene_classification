@@ -2,7 +2,7 @@ function [ train_pyramids, train_labels, test_pyramids, test_labels ] = createDa
 %createDataSplit Summary of this function goes here
 %   Detailed explanation goes here
 
-classes = size(train_pyramidsC,1);
+classes = size(train_pyramidsC,2);
 
 num_train = size(train_pyramidsC{1},1);
 
