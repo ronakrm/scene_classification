@@ -2,7 +2,8 @@
 
 %% param stuff
 
-load_pyramids = true;
+%load_pyramids = true;
+load_pyramids = false;
 
 %number of training instances
 %num_train = [25, 50, 100];
@@ -63,7 +64,7 @@ else
     
     for seed=1:seedsize
         
-        data_dir = strcat('data',num2str(seed));
+        data_dir = strcat('data_LLC_',num2str(seed));
         
         trainmatfile = sprintf('train_pyramids_%d.mat',seed);
         testmatfile = sprintf('test_pyramids_%d.mat',seed);
