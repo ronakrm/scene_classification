@@ -18,8 +18,23 @@ Parameters for grid search and model generation are set in the "Parameter Setup"
 ### Linear kernel vs Histogram-Intersection Kernel
 Here is why why one would wish to use the hist kern....
 
-We fixed the parameters to TODO and ran the classification training and testing both with and without using the Histogram Intersection Kernel. In general, the use of the kernel provides a significant accuracy boost. Below we report the accuracies and confusion matricies for both methods, averaged over 5 random reselections of training sets:
+We fixed the parameters to the following:
+
+*params.maxImageSize = 1000;
+*params.gridSpacing = 8;
+*params.patchSize = 16;
+*params.dictionarySize = 200;
+*params.numTextonImages = 100;
+*params.pyramidLevels = 3;
+
+We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost. Below we report the accuracies and confusion matricies for both methods,. The confusion matrix is taken from  one  random sampling of the entire set, and the accuracies are averaged over 5 random reselections of trainingand sets.
+
+| Linear Kernel | Histogram Intersection Kernel |
+|---------------|-------------------------------|
+| 68.37%        | 76.94%                        |
+
   TODO confusionHIST
+  FASTER
   TODO confusionNONHIST
 
 ### Kernel Methods
