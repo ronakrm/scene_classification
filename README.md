@@ -27,15 +27,19 @@ We fixed the parameters to the following:
 *params.numTextonImages = 100;
 *params.pyramidLevels = 3;
 
-We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost. Below we report the accuracies and confusion matricies for both methods,. The confusion matrix is taken from  one  random sampling of the entire set, and the accuracies are averaged over 5 random reselections of trainingand sets.
+We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost.  We also found that because the histogram interection kernel uses fewer features, it runs significantly faster than the linear kernel. Below we report the accuracies and confusion matricies for both methods,. The confusion matrix is taken from  one  random sampling of the entire set, and the accuracies are averaged over 5 random reselections of trainingand sets.
 
-| Linear Kernel | Histogram Intersection Kernel |
-|---------------|-------------------------------|
-| 68.37%        | 76.94%                        |
+| Kernel Type                   | Mean Class Accuracy |
+|-------------------------------|---------------------|
+| Linear Kernel                 | 68.37%              |
+| Histogram Intersection Kernel | 76.94%              |
 
-  TODO confusionHIST
-  FASTER
-  TODO confusionNONHIST
+
+![alt text](https://github.com/ronakrm/scene_classification/SP/linear_confusion.png "Linear Kernel Matrix")
+
+![alt text](https://github.com/ronakrm/scene_classification/SP/hist_isect_confusion.png "Histogram Intersection Confusion Matrix")
+
+In this application, it is clear that using the histogram intersection kernel over the linear kernel  greatly improves performance and accuracy.
 
 ### Kernel Methods
 
