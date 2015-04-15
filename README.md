@@ -35,9 +35,9 @@ We ran the classification training and testing with both a standard linear kerne
 | Histogram Intersection Kernel | 76.94%              |
 
 
-![alt text](https://github.com/ronakrm/scene_classification/SP/linear_confusion.png "Linear Kernel Matrix")
+![alt text](https://github.com/ronakrm/scene_classification/blob/master/SP/linear_confusion.png "Linear Kernel Matrix")
 
-![alt text](https://github.com/ronakrm/scene_classification/SP/hist_isect_confusion.png "Histogram Intersection Confusion Matrix")
+![alt text](https://github.com/ronakrm/scene_classification/blob/master/SP/hist_isect_confusion.png "Histogram Intersection Confusion Matrix")
 
 In this application, it is clear that using the histogram intersection kernel over the linear kernel  greatly improves performance and accuracy.
 
