@@ -2,7 +2,7 @@
 
 %% param stuff
 
-load_pyramids = false;
+load_pyramids = true;
 
 %number of training instances
 %num_train = [25, 50, 100];
@@ -58,11 +58,12 @@ else
     
     % set image_dir and data_dir to your actual directories
     image_dir = '../inputs';
-    data_dir = 'data';
-    
+        
     seedsize = 5;
     
     for seed=1:seedsize
+        
+        data_dir = strcat('data',num2str(seed));
         
         trainmatfile = sprintf('train_pyramids_%d.mat',seed);
         testmatfile = sprintf('test_pyramids_%d.mat',seed);
@@ -116,7 +117,7 @@ else
 
         end
         
-        test_labels = zeros(total_images,1);
+        test_labels = zeros(total_images-num_train*num_dirs,1);
         
         %get labels for test set
         test_counter = 1;
@@ -152,6 +153,10 @@ else
         save(trainlabelfile, 'train_labels');
         save(testlabelfile, 'test_labels');
         
+        % save out class names
+        class_names = dirs(:).name;
+        save('class_label_names.mat', 'class_names');
+        
         % make set
         train_pyramids_set{1} = train_pyramids;
         test_pyramids_set{1} = test_pyramids;
@@ -171,11 +176,4 @@ end
     );
 
 % make confusion matrix
-c = confusionmat(actual_labels,predicted_labels);
-
-cc = c;
-for i=1:size(unique(train_labels_set{1}),1)
-    cc(i,:) = c(i,:)/sum(c(i,:));
-end
-
-imshow(cc, 'InitialMagnification', 1000);
+plot_confusion(dirs, actual_labels, predicted_labels);

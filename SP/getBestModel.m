@@ -10,7 +10,7 @@ accuracy = 0;
 num_runs = size(train_pyramids_set,1);
 num_classes = size(unique(train_labels_set{1}),1);
 
-for k=1:size(kernel_type)
+for k=1:size(kernel_type,1)
     mean_accuracy = 0;
     for run=1:num_runs
         
