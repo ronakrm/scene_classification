@@ -18,9 +18,28 @@ Parameters for grid search and model generation are set in the "Parameter Setup"
 ### Linear kernel vs Histogram-Intersection Kernel
 Here is why why one would wish to use the hist kern....
 
-We fixed the parameters to TODO and ran the classification training and testing both with and without using the Histogram Intersection Kernel. In general, the use of the kernel provides a significant accuracy boost. Below we report the accuracies and confusion matricies for both methods, averaged over 5 random reselections of training sets:
-  TODO confusionHIST
-  TODO confusionNONHIST
+We fixed the parameters to the following:
+
+* params.maxImageSize = 1000;
+* params.gridSpacing = 8;
+* params.patchSize = 16;
+* params.dictionarySize = 200;
+* params.numTextonImages = 100;
+* params.pyramidLevels = 3;
+
+We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost.  We also found that because the histogram interection kernel uses fewer features, it runs significantly faster than the linear kernel. Below we report the accuracies and confusion matricies for both methods,. The confusion matrix is taken from  one  random sampling of the entire set, and the accuracies are averaged over 5 random reselections of trainingand sets.
+
+| Kernel Type                   | Mean Class Accuracy |
+|-------------------------------|---------------------|
+| Linear Kernel                 | 68.37%              |
+| Histogram Intersection Kernel | 76.94%              |
+
+
+![alt text](https://github.com/ronakrm/scene_classification/SP/linear_confusion.png "Linear Kernel Matrix")
+
+![alt text](https://github.com/ronakrm/scene_classification/SP/hist_isect_confusion.png "Histogram Intersection Confusion Matrix")
+
+In this application, it is clear that using the histogram intersection kernel over the linear kernel  greatly improves performance and accuracy.
 
 ### Kernel Methods
 
