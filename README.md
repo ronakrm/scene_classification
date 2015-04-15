@@ -20,12 +20,12 @@ Here is why why one would wish to use the hist kern....
 
 We fixed the parameters to the following:
 
-*params.maxImageSize = 1000;
-*params.gridSpacing = 8;
-*params.patchSize = 16;
-*params.dictionarySize = 200;
-*params.numTextonImages = 100;
-*params.pyramidLevels = 3;
+* params.maxImageSize = 1000;
+* params.gridSpacing = 8;
+* params.patchSize = 16;
+* params.dictionarySize = 200;
+* params.numTextonImages = 100;
+* params.pyramidLevels = 3;
 
 We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost.  We also found that because the histogram interection kernel uses fewer features, it runs significantly faster than the linear kernel. Below we report the accuracies and confusion matricies for both methods,. The confusion matrix is taken from  one  random sampling of the entire set, and the accuracies are averaged over 5 random reselections of trainingand sets.
 
