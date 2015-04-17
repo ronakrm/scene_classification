@@ -82,3 +82,15 @@ confusion matrix/accuracy of various kernel methods (linear, quadratic, rbf, ise
   comments on overfitting here
   
 ### Grid Search
+
+A grid search was performed over the parameters listed above to find the optimal set. Below are the values that were searched over for each parameter.
+
+* params.gridSpacing = 2,4,8;
+* params.patchSize = 4,8,16;
+* params.dictionarySize = 64,256,1024,2048,4096,8192
+* params.pyramidLevels = 3,4,8;
+* kernel_type = linear and histogram intersection
+
+Results were averaged over three runs for each parameter configuration. The training set size was fixed to 100 images per class.
+
+RESULT TABLE
