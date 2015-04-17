@@ -71,8 +71,8 @@ We ran the classification training and testing with both a standard linear kerne
 
 | Kernel Type                   | Mean Class Accuracy |
 |-------------------------------|---------------------|
-| Linear Kernel                 | 68.37%              |
-| Histogram Intersection Kernel | 76.94%              |
+| Linear Kernel                 | 59.77%              |
+| Histogram Intersection Kernel | 64.48%              |
 
 LLC Linear Kernel Confusion Matrix
 ![alt text](https://github.com/ronakrm/scene_classification/blob/master/SP/linear_confusionLLC.png "LLC Linear Kernel Matrix")
@@ -80,19 +80,8 @@ LLC Linear Kernel Confusion Matrix
 LLC Histogram Intersection Kernel Confusion Matrix
 ![alt text](https://github.com/ronakrm/scene_classification/blob/master/SP/hist_isect_confusionLLC.png "LLC Histogram Intersection Confusion Matrix")
 
-Comparing these results to the previous section, it is clear that LLC ______ . 
+Comparing these results to the previous section, it appears that LLC achieves lower accuracy than VQ. We believe this is because of the dictionary size chosen for both experiments. [Wang et al.](http://www.ifp.illinois.edu/~jyang29/papers/CVPR10-LLC.pdf) recommend using a much larger dictionary size (e.g., 1024, 2048). 
 
-### Kernel Methods
-
-confusion matrix/accuracy of various kernel methods (linear, quadratic, rbf, isect-hist)
-  
-### Training Set Size
-  We fixed the parameters to TODO and varied the training set size from the set [asdf asdf asdfas].
-  
-  TODO plot of accuracy vs training set size
-  
-  comments on overfitting here
-  
 ### Grid Search
 
 A grid search was performed over the parameters listed above to find the optimal set. Below are the values that were searched over for each parameter.
