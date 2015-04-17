@@ -91,9 +91,11 @@ A grid search was performed over the parameters listed above to find the optimal
 * params.patchSize = 4,8,16;
 * params.dictionarySize = 1024,2048,4096,8192,16384
 * params.pyramidLevels = 3,4,8;
-* kernel_type = linear and histogram intersection
 * nearestNeighbor = 3,5,10;
 
 Results were averaged over three runs for each parameter configuration. The training set size was fixed to 100 images per class.
 
-RESULT TABLE
+| Kernel Type                   | Mean Class Accuracy |
+|-------------------------------|---------------------|
+| Linear Kernel                 | 59.77%              |
+| Histogram Intersection Kernel | **64.48%**              |
