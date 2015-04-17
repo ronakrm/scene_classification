@@ -88,7 +88,7 @@ A grid search was performed over the parameters listed above to find the optimal
 
 * params.gridSpacing = 2,4,8;
 * params.patchSize = 4,8,16;
-* params.dictionarySize = 64,256,1024,2048,4096,8192
+* params.dictionarySize = 1024,2048,4096,8192,16384
 * params.pyramidLevels = 3,4,8;
 * kernel_type = linear and histogram intersection
 
