@@ -66,6 +66,7 @@ We fixed the parameters to the following:
 * params.dictionarySize = 200;
 * params.numTextonImages = 100;
 * params.pyramidLevels = 3;
+* params.nearestNeighbor = 5;
 
 We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost.  We also found that because the histogram interection kernel uses fewer features, it runs significantly faster than the linear kernel. Below we report the accuracies and confusion matricies for both methods. The confusion matrix is taken from  one  random sampling of the entire set, and the accuracies are averaged over 5 random reselections of trainingand sets.
 
@@ -91,6 +92,7 @@ A grid search was performed over the parameters listed above to find the optimal
 * params.dictionarySize = 1024,2048,4096,8192,16384
 * params.pyramidLevels = 3,4,8;
 * kernel_type = linear and histogram intersection
+* nearestNeighbor = 3,5,10;
 
 Results were averaged over three runs for each parameter configuration. The training set size was fixed to 100 images per class.
 
