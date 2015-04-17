@@ -2,7 +2,7 @@ function [ H_all ] = BuildHistogramsLLC( imageFileList,imageBaseDir, dataBaseDir
 %function [ H_all ] = BuildHistograms( imageFileList, dataBaseDir, featureSuffix, params, canSkip )
 %
 %find texton labels of patches and compute texton histograms of all images
-%   
+%
 % For each image the set of sift descriptors is loaded and then each
 %  descriptor is labeled with its texton label. Then the global histogram
 %  is calculated for the image. If you wish to just use the Bag of Features
@@ -15,11 +15,11 @@ function [ H_all ] = BuildHistogramsLLC( imageFileList,imageBaseDir, dataBaseDir
 %  by the algorithm. If this dir is the same as imageBaseDir the files
 %  will be generated in the same location as the image file
 % featureSuffix: this is the suffix appended to the image file name to
-%  denote the data file that contains the feature textons and coordinates. 
+%  denote the data file that contains the feature textons and coordinates.
 %  Its default value is '_sift.mat'.
 % dictionarySize: size of descriptor dictionary (200 has been found to be
 %  a good size)
-% canSkip: if true the calculation will be skipped if the appropriate data 
+% canSkip: if true the calculation will be skipped if the appropriate data
 %  file is found in dataBaseDir. This is very useful if you just want to
 %  update some of the data or if you've added new images.
 
@@ -68,7 +68,7 @@ if(exist('pfig','var'))
     %tic;
 end
 for f = 1:length(imageFileList)
-
+    
     imageFName = imageFileList{f};
     [dirN base] = fileparts(imageFName);
     baseFName = fullfile(dirN, base);
@@ -99,9 +99,9 @@ for f = 1:length(imageFileList)
         sp_progress_bar(pfig,3,4,f,length(imageFileList),'Building Histograms:');
     end
     %fprintf('Loaded %s, %d descriptors\n', inFName, ndata);
-
-    %% find texton indices and compute histogram 
-    texton_ind.data = zeros(ndata,1);
+    
+    %% find texton indices and compute histogram
+    texton_ind.data = zeros(ndata,params.nearestNeighbor,2);
     texton_ind.x = features.x;
     texton_ind.y = features.y;
     texton_ind.wid = features.wid;
@@ -109,35 +109,100 @@ for f = 1:length(imageFileList)
     %run in batches to keep the memory foot print small
     batchSize = 100000;
     
-    num_neighbors = 5;
+    num_neighbors = params.nearestNeighbor;
     
     if ndata <= batchSize
+        
+        % get distances from each image feature to all dictionary codewords
         dist_mat = sp_dist2(features.data, dictionary);
         
-        [weights words] = sortrows(dist_mat);
+        % sort the distances for each image feature
+        [sorted_distances d_codes] = sort(dist_mat,2);
         
-        neighbors = words(1:k);
-        
-        [min_dist, min_ind] = min(dist_mat, [], 2);
-        
+        % only care about nearest neighbors
+        d_codes = d_codes(:,1:num_neighbors);
         
         
-        weighted_ind = 
+        % construct histogram
+        tmp_hist = zeros(params.dictionarySize,1);
         
-        texton_ind.data = weighted_ind;
+        for f=1:ndata
+            x = features.data(f,:)';
+            
+            B = dictionary(d_codes(f,:),:);
+            
+            one = ones(num_neighbors, 1);
+            
+            % compute data covariance matrix
+            B_1x = B - one *x';
+            C = B_1x * B_1x';
+            
+            % reconstruct LLC code
+            c_hat = C \ one;
+            c_hat = c_hat /sum(c_hat);
+            
+            % get max index of c-hat
+            %[maxx index] = max(c_hat);
+            
+            %bin = d_codes(f,index);
+            %texton_ind.data(f) = bin;
+            
+            texton_ind.data(f,:,1) = d_codes(f,:);
+            texton_ind.data(f,:,2) = c_hat;
+            
+        end
+        
     else
         for j = 1:batchSize:ndata
             lo = j;
             hi = min(j+batchSize-1,ndata);
+            
+            % get distances from each image feature to all dictionary codewords
             dist_mat = sp_dist2(features.data(lo:hi,:), dictionary);
-            [min_dist, min_ind] = min(dist_mat, [], 2);
-            texton_ind.data(lo:hi,:) = min_ind;
+            
+            % sort the distances for each image feature
+            [sorted_distances d_codes] = sort(dist_mat,2);
+            
+            % only care about nearest neighbors
+            sorted_distances = sorted_distances(:,1:num_neighbors);
+            d_codes = d_codes(:,1:num_neighbors);
+            
+            % normalize distances to 1
+            normed_distances = normr(sorted_distances);
+            
+            % construct histogram
+            tmp_hist = zeros(params.dictionarySize,1);
+            
+            for f=1:batchSize
+                for k=1:num_neighbors
+                    weight = normed_distances(f,k);
+                    bin = d_codes(f,k);
+                    tmp_hist(bin) = tmp_hist(bin) + weight;
+                end
+            end
+            
+            % ceiling magic
+            tmp_hist = ceil(tmp_hist);
+            
+            % unroll histogram for SP code
+            unrolled_hist = zeros(batchSize,1);
+            
+            iterator = 0;
+            for b = 1:params.dictionarySize
+                votes = tmp_hist(b);
+                for v=1:votes
+                    unrolled_hist(iterator+v) = b;
+                end
+                iterator = iterator + votes;
+            end
+            
+            texton_ind.data(lo:hi,:) = unrolled_hist;
         end
     end
-
-    H = hist(texton_ind.data, 1:params.dictionarySize);
+    
+    H = hist(texton_ind.data(:,:,1), 1:params.dictionarySize);
     H_all = [H_all; H];
-
+    
     %% save texton indices and histograms
     sp_make_dir(outFName);
     save(outFName, 'texton_ind');

@@ -61,7 +61,12 @@ binsHigh = 2^(params.pyramidLevels-1);
 if(exist('pfig','var'))
     %tic;
 end
-pyramid_all = zeros(length(imageFileList),params.dictionarySize*sum((2.^(0:(params.pyramidLevels-1))).^2));
+
+%%%%%%%%%%%%%%%%%%% CHANGE SIZE FOR LLC %%%%%%%%%%%%%%%%%%%%%%%%
+%pyramid_all = zeros(length(imageFileList),params.dictionarySize*sum((2.^(0:(params.pyramidLevels-1))).^2));
+pyramid_all = zeros(length(imageFileList),params.dictionarySize*params.pyramidLevels);
+
+
 for f = 1:length(imageFileList)
 
 
@@ -106,7 +111,7 @@ for f = 1:length(imageFileList)
             y_hi = floor(hgt/binsHigh * j);
             
             texton_patch = texton_ind.data( (texton_ind.x > x_lo) & (texton_ind.x <= x_hi) & ...
-                                            (texton_ind.y > y_lo) & (texton_ind.y <= y_hi));
+                                            (texton_ind.y > y_lo) & (texton_ind.y <= y_hi),:,:);
             
             % make histogram of features in bin
             pyramid_cell{1}(i,j,:) = hist(texton_patch, 1:params.dictionarySize)./length(texton_ind.data);
@@ -127,34 +132,20 @@ for f = 1:length(imageFileList)
         num_bins = num_bins/2;
     end
 
-    %% stack all the histograms with MAX POOLING
-    pyramid = zeros(params.dictionarySize*params.pyramidLevels,1);
-    
-    
-    for lvl = 1:params.pyramidLevels
-        maxes = zeros(params.dictionarySize,1);
-        level = pyramid_cell{lvl};
-        
-        for desc = 1:params.dictionarySize
-            for binX = 1:num_bins
-                for binY = 1:num_bins
-                    if level(binX,binY,desc) > maxes(desc)
-                        maxes(desc) = level(binX,binY,desc);
-                    end
-                end
-            end
-        end
-        
-        pyramid((lvl-1)*params.dictionarySize+1:lvl*params.dictionarySize) =  (maxes/sum(maxes.*maxes))';
-        
+    %% stack all the histograms with appropriate weights
+    pyramid = [];
+    for l = 1:params.pyramidLevels-1
+        pyramid = [pyramid pyramid_cell{l}(:)' .* 2^(-l)];
     end
-    
-    % save pyramid
-    sp_make_dir(outFName);
-    save(outFName, 'pyramid');
+    pyramid = [pyramid pyramid_cell{params.pyramidLevels}(:)' .* 2^(1-params.pyramidLevels)
 
     pyramid_all(f,:) = pyramid;
 
+    % save pyramid
+    sp_make_dir(outFName);
+    save(outFName, 'pyramid');
+    
+    
 end % f
 
 outFName = fullfile(dataBaseDir, sprintf('pyramids_all_%d_%d.mat', params.dictionarySize, params.pyramidLevels));
