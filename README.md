@@ -7,12 +7,24 @@ The 'inputs' folder in the root directory of the repository should hold input da
 
 Note: Initial generation of spatial pyramid features takes quite a long time. Subsequent re-executions of the code will run much faster, as the features are loaded from data files created by the first run. 
 
-## Parameter Setup
+NOTE: The libsvm folder and its subdirectories should be added to the path before running the code.
 
-Parameters for grid search and model generation are set in the "Parameter Setup" section in SP/main.m
+### Parameters
 
-*param1:deatils
-*param2:details
+Parameters for grid search and model generation are set in the "Parameter Setup" section in SP/main.m. 
+
+* params.maxImageSize = 1000;
+* params.gridSpacing = 8;
+* params.patchSize = 16;
+* params.dictionarySize = 200;
+* params.numTextonImages = 100; /* Should always be set to training set size */
+* params.pyramidLevels = 3;
+
+The kernel for SVM classification can be set with the 'kernel_type' parameter.
+
+### Execution
+
+After setting the parameters in SP/main.m and importing images into the 'inputs' folder as specified above, the program can be run simply by executing main in the SP folder. Training results and accuracies will display in the terminal and will be saved out to a text file.
 
 ## Results
 ### Linear kernel vs Histogram-Intersection Kernel
