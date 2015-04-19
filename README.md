@@ -39,7 +39,7 @@ We fixed the parameters to the following:
 * params.numTextonImages = 100;
 * params.pyramidLevels = 3;
 
-We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost.  We also found that because the histogram interection kernel uses fewer features, it runs significantly faster than the linear kernel. Below we report the accuracies and confusion matricies for both methods. The confusion matrix is taken from  one  random sampling of the entire set, and the accuracies are averaged over 5 random reselections of trainingand sets.
+We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost.  We also found that because the histogram interection kernel uses fewer features, it runs significantly faster than the linear kernel. Below we report the accuracies and confusion matricies for both methods. The confusion matrix is taken from  one random sampling of the entire set, and the accuracies are averaged over 5 random reselections of training and sets.
 
 | Kernel Type                   | Mean Class Accuracy |
 |-------------------------------|---------------------|
@@ -68,20 +68,17 @@ We fixed the parameters to the following:
 * params.pyramidLevels = 3;
 * params.nearestNeighbor = 5;
 
-We ran the classification training and testing with both a standard linear kernel and with the Histogram Intersection kernel. In general, the use of the Histogram Intersection kernel provides a significant accuracy boost.  We also found that because the histogram interection kernel uses fewer features, it runs significantly faster than the linear kernel. Below we report the accuracies and confusion matricies for both methods. The confusion matrix is taken from  one  random sampling of the entire set, and the accuracies are averaged over 5 random reselections of trainingand sets.
+Below we report the accuraciesfor both kernels using LLC. The confusion matrix is taken from  one random sampling of the entire set using the histogram intersection kernel, which has proven to be better in all cases. The accuracies are averaged over 5 random reselections of training and sets.
 
 | Kernel Type                   | Mean Class Accuracy |
 |-------------------------------|---------------------|
-| Linear Kernel                 | 59.77%              |
-| Histogram Intersection Kernel | 64.48%              |
-
-LLC Linear Kernel Confusion Matrix
-![alt text](https://github.com/ronakrm/scene_classification/blob/master/SP/linear_confusionLLC.png "LLC Linear Kernel Matrix")
+| Linear Kernel                 | 75.49%              |
+| Histogram Intersection Kernel | 77.27%              |
 
 LLC Histogram Intersection Kernel Confusion Matrix
 ![alt text](https://github.com/ronakrm/scene_classification/blob/master/SP/hist_isect_confusionLLC.png "LLC Histogram Intersection Confusion Matrix")
 
-Comparing these results to the previous section, it appears that LLC achieves lower accuracy than VQ. We believe this is because of the dictionary size chosen for both experiments. [Wang et al.](http://www.ifp.illinois.edu/~jyang29/papers/CVPR10-LLC.pdf) recommend using a much larger dictionary size (e.g., 1024, 2048). 
+Comparing these results to the previous section, it is clear that LLC achieves significantly higher accuracy than VQ. Below we imiplement a grid search on spatial pyramid parameters, as there is some indication that better accuracies may be possible. [Wang et al.](http://www.ifp.illinois.edu/~jyang29/papers/CVPR10-LLC.pdf) recommend using a much larger dictionary size (e.g., 1024, 2048), for example. 
 
 ### Grid Search
 
@@ -90,7 +87,7 @@ A grid search was performed over the parameters listed above to find the optimal
 * params.gridSpacing = 2,4,8;
 * params.patchSize = 4,8,16;
 * params.dictionarySize = 1024,2048,4096,8192,16384
-* params.pyramidLevels = 3,4,8;
+* params.pyramidLevels = 3,4,5;
 * nearestNeighbor = 3,5,10;
 
 Results were averaged over three runs for each parameter configuration. The training set size was fixed to 100 images per class.
