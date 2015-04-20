@@ -101,7 +101,7 @@ for f = 1:length(imageFileList)
     %fprintf('Loaded %s, %d descriptors\n', inFName, ndata);
     
     %% find texton indices and compute histogram
-    texton_ind.data = zeros(ndata,params.nearestNeighbor,2);
+    texton_ind.data = zeros(ndata,params.dictionarySize);
     texton_ind.x = features.x;
     texton_ind.y = features.y;
     texton_ind.wid = features.wid;
@@ -147,14 +147,14 @@ for f = 1:length(imageFileList)
             %bin = d_codes(f,index);
             %texton_ind.data(f) = bin;
             
-            texton_ind.data(f,:,1) = d_codes(f,:);
-            texton_ind.data(f,:,2) = c_hat;
+            texton_ind.data(f,d_codes(f,:)) = c_hat;
+
             
         end
         
     else
         for j = 1:batchSize:ndata
-            lo = j;
+            %lo = j;
             hi = min(j+batchSize-1,ndata);
             
             % get distances from each image feature to all dictionary codewords
@@ -200,7 +200,7 @@ for f = 1:length(imageFileList)
         end
     end
     
-    H = hist(texton_ind.data(:,:,1), 1:params.dictionarySize);
+    H = hist(texton_ind.data, 1:params.dictionarySize);
     H_all = [H_all; H];
     
     %% save texton indices and histograms

@@ -9,12 +9,12 @@ load_pyramids = false;
 num_train = 100;
 
 %libsvm kernel type; 4 is custom precompute, here hist_isect
-kernel_type = [0]; %0 to 4
+kernel_type = [0;4]; %0 to 4
 
 params.maxImageSize = 1000;
 params.gridSpacing = 8;
 params.patchSize = 16;
-params.dictionarySize = 2048;
+params.dictionarySize = 200;
 params.numTextonImages = num_train;
 params.pyramidLevels = 3;
 params.oldSift = false;
@@ -29,18 +29,19 @@ dirs(1)=[];dirs(1)=[];
 num_dirs = size(dirs,1);
 
 %number of runs for paramset
-seedsize = 3;
+seedsize = 5;
 
 %%
+train_pyramids_set = cell(seedsize,1);
+test_pyramids_set = cell(seedsize,1);
 
+train_labels_set = cell(seedsize,1);
+test_labels_set = cell(seedsize,1);
+    
 %load pyramids from random seed
 if load_pyramids
     
-    train_pyramids_set = cell(seedsize,1);
-    test_pyramids_set = cell(seedsize,1);
-    
-    train_labels_set = cell(seedsize,1);
-    test_labels_set = cell(seedsize,1);
+
     
     for t=1:seedsize
         
@@ -88,19 +89,13 @@ else
         test_filenames = cell(1,1);
         
         train_labels = zeros(num_dirs*num_train,1);
-        
-        train_pyramids_set = cell(seedsize,1);
-        test_pyramids_set = cell(seedsize,1);
-        
-        train_labels_set = cell(seedsize,1);
-        test_labels_set = cell(seedsize,1);
-        
+       
         for d = 1:num_dirs
             
             dirname = dirs(d).name;
             
             fnames = dir(fullfile(image_dir, dirname, '*.jpg'));
-            num_files = size(fnames,1);
+            num_files = ceil(size(fnames,1));
             total_images = total_images + num_files;
             test_size = num_files-num_train;
             
@@ -137,26 +132,25 @@ else
         warning('off','MATLAB:hg:EraseModeIgnored');
         
         %train_pyramids = BuildPyramidLLC(train_filenames, fullfile(image_dir), fullfile(data_dir),params,1,1);
-        pfig = sp_progress_bar('Building Sift Descriptors for Train and Test');
+        pfig = sp_progress_bar('TRAIN');
         if(1)
             GenerateSiftDescriptors(train_filenames, fullfile(image_dir), fullfile(data_dir),params,1,pfig);
-            GenerateSiftDescriptors(test_filenames, fullfile(image_dir), fullfile(data_dir),params,1,pfig);
         end
         
         %Build dictionary with train
         CalculateDictionary(train_filenames,fullfile(image_dir), fullfile(data_dir),'_sift.mat',params,1,pfig);
         
-        BuildHistogramsLLC(train_filenames, fullfile(image_dir), fullfile(data_dir),'_sift.mat',params,0,pfig);
-        train_pyramids = CompilePyramidLLC(train_filenames, fullfile(data_dir), sprintf('_texton_ind_%d.mat',params.dictionarySize),params,0,pfig);
+        BuildHistogramsLLC(train_filenames, fullfile(image_dir), fullfile(data_dir),'_sift.mat',params,1,pfig);
+        train_pyramids = CompilePyramidLLC(train_filenames, fullfile(data_dir), sprintf('_texton_ind_%d.mat',params.dictionarySize),params,1,pfig);
         close(pfig);
         
-        pfig = sp_progress_bar('Building Histograms and Spatial Pyramids for Test');
+        pfig = sp_progress_bar('TEST');
         if(1)
             GenerateSiftDescriptors( test_filenames, fullfile(image_dir), fullfile(data_dir),params,1,pfig);
         end
                 
-        BuildHistogramsLLC(test_filenames, fullfile(image_dir), fullfile(data_dir),'_sift.mat',params,0,pfig);
-        test_pyramids = CompilePyramidLLC(test_filenames, fullfile(data_dir), sprintf('_texton_ind_%d.mat',params.dictionarySize),params,0,pfig);
+        BuildHistogramsLLC(test_filenames, fullfile(image_dir), fullfile(data_dir),'_sift.mat',params,1,pfig);
+        test_pyramids = CompilePyramidLLC(test_filenames, fullfile(data_dir), sprintf('_texton_ind_%d.mat',params.dictionarySize),params,1,pfig);
         close(pfig);
         
         displayyy = sprintf('Completed building pyramids for dir %d',d);
