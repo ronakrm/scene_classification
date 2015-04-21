@@ -22,8 +22,8 @@ num_dirs = size(dirs,1);
 num_runs = 1;
 
 %% PARAMETERS FOR GRID SEARCH
-gridSpacing = [2;4;8];
-patchSize = [4;8;16];
+gridSpacing = [8;16];
+patchSize = [16;64];
 dictionarySize = [1024;2048;4096;8192;16384];
 pyramidLevels = [3;4;5];
 nearestNeighbor = [3;5;10];
