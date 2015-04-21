@@ -82,7 +82,9 @@ Comparing these results to the previous section, it is clear that LLC achieves s
 
 ### Grid Search
 
-A grid search was performed over the parameters listed above to find the optimal set. Below are the values that were searched over for each parameter.
+Unfortunately due to time constraints we were unable to complete a grid search. All of the code was written and the grid search is ready to be run, but due to the size of files involved and the time complexity, it was unfeasible to complete.
+
+A grid search would have been run over the parameters listed above to find the optimal set. Below are the values that we proposed searching over for each parameter.
 
 * params.gridSpacing = 2,4,8;
 * params.patchSize = 4,8,16;
@@ -90,9 +92,14 @@ A grid search was performed over the parameters listed above to find the optimal
 * params.pyramidLevels = 3,4,5;
 * nearestNeighbor = 3,5,10;
 
-Results were averaged over three runs for each parameter configuration. The training set size was fixed to 100 images per class.
+Results would have been averaged over three runs for each parameter configuration. The training set size was fixed to 100 images per class.
 
-| Kernel Type                   | Mean Class Accuracy |
-|-------------------------------|---------------------|
-| Linear Kernel                 | 59.77%              |
-| Histogram Intersection Kernel | **64.48%**              |
+To run the grid search in its current form:
+
+1. Set up file locations and subdirectories as described in the above Setup section.
+2. Edit the parameter search space in main_grid.m
+3. Run main_grid.m
+
+The program will take many hours to complete, but as it runs all results from each parameter set are appended to a file "results.txt". Each line represents an average accuracy for a given set of parameters.
+
+While we were unable to run this search, we expect there to be a trade-off between runtime of a parameter configuration and average accuracy, with a maximum at a specific location for each parameter. For example, as we increase the dictionary size, the time to calculate Histograms should increase significantly, but we expect that a richer dictionary should allow us to better classify test instances. We also suspect, however, that a very large dictionary may overfit the training images, and at some point cause a decrease in test set accuracy. This sort of trend is to be expected for all parameters, as image classification is a typical instantiation of a machine learning problem, and these hyperparameters tend to follow such a trend.
