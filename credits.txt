@@ -1,0 +1,8 @@
+CS 766 Spring 2015 Assignment 3
+Steven Johnson, Ronak Mehta
+sjj@cs.wisc.edu, ronakrm@cs.wisc.edu
+
+Steven: 50%
+Ronak:	50%
+
+Documentation is in the README.md, or can be found at https://github.com/ronakrm/scene_classification.
